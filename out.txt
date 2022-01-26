@@ -1,0 +1,31 @@
+
+Operation       : ADD
+Operator 1      : 0x1
+Operator 2      : 0x1
+Operator 3      : 0x0
+Result          : 0x2
+
+Operation       : ADD
+Operator 1      : 0xAAA5555
+Operator 2      : 0x555AAAA
+Operator 3      : 0x0
+Result          : 0xFFFFFFF
+
+Operation       : ADD
+Operator 1      : 0xFFFFFFFF
+Operator 2      : 0x1
+Operator 3      : 0x0
+Result          : 0x0
+
+Operation       : ADD
+Operator 1      : 0x1234
+Operator 2      : 0x8765
+Operator 3      : 0x0
+Result          : 0x9999
+
+Operation       : ADD
+Operator 1      : 0x72DF9901
+Operator 2      : 0x2E0B484A
+Operator 3      : 0x0
+Result          : 0xA0EAE14B
+
