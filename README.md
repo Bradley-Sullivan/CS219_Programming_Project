@@ -5,6 +5,8 @@ Bradley Sullivan
 
 CS 219.1001
 
+Git Repository: https://github.com/Bradley-Sullivan/CS219_Programming_Project_1.git
+
 ## Build Environment
 - Written in Visual Studio Code
 - Compiled with g++ 9.3.0
