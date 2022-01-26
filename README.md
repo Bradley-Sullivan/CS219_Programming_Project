@@ -14,7 +14,7 @@ CS 219.1001
 ## Build Instructions
 Built with Make on Linux using the included makefile.
 
-To build execute the `make` command in the Linux terminal. No additional options/arguments necessary.
+To build, execute the `make` command in the Linux terminal. No additional options/arguments necessary.
 
 ### Project Overview
 This program aims to emulate basic ARM Assembly language instructions with C++, specifically only the ADD, SUB, MUL, and DIV operations.
