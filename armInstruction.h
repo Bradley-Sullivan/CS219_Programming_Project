@@ -1,3 +1,15 @@
+/**
+ * @file armInstruction.h
+ * @author Bradley Sullivan (bradleysullivan@nevada.unr.edu)
+ * @brief Defines the ARM instruction class. Responsible for parsing, executing,
+ *        converting hex <-> decimal, and returning execution output
+ * @version 0.1
+ * @date 2022-01-26
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef ARMINSTRUCTION_H
 #define ARMINSTRUCTION_H
 
