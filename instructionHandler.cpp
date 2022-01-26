@@ -127,46 +127,9 @@ uint32_t InstructionHandler::hexStrToInt(std::string hex) {
     uint32_t x = 0;
     if (hex[0] == '0' && hex[1] == 'x') {
         for (int i = 2; i < (int) hex.length(); i++) {
-            switch (hex[i]) {
-                case 'A':
-                    x += 10 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'B':
-                    x += 11 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'C':
-                    x += 12 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'D':
-                    x += 13 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'E':
-                    x += 14 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'F':
-                    x += 15 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'a':
-                    x += 10 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'b':
-                    x += 11 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'c':
-                    x += 12 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'd':
-                    x += 13 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'e':
-                    x += 14 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                case 'f':
-                    x += 15 * (pow(16, (hex.length() - 1) - i));
-                    break;
-                default:
-                    x += (hex[i] - '0') * (pow(16, (hex.length() - 1) - i));
-            }
+            if (hex[i] >= 65 && hex[i] <= 70) x += (10 + (hex[i] - 65)) * (pow(16, (hex.length() - 1) - i));
+            else if (hex[i] >= 97 && hex[i] <= 102) x += (10 + (hex[i] - 97)) * (pow(16, (hex.length() - 1) - i));
+            else if (hex[i] >= 48 && hex[i] <= 57) x += (hex[i] - 48) * (pow(16, (hex.length() - 1) - i));
         }
     }
     else {
