@@ -29,3 +29,9 @@ Operator 2      : 0x2E0B484A
 Operator 3      : 0x0
 Result          : 0xA0EAE14B
 
+Operation       : SUB
+Operator 1      : 0x69
+Operator 2      : 0x54
+Operator 3      : 0x0
+Result          : 0x15
+
