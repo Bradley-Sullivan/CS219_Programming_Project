@@ -4,7 +4,7 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
     std::string hexConv;
     INSTRUCTION temp;
     int control = 1;
-    for (uint32_t i = 0; i < bufSize || control == 4; i++) {
+    for (uint32_t i = 0; i < bufSize || control == 5; i++) {
         switch (control) {
             case 1:
                 if (buffer[i] >= 65 && buffer[i] <= 90) temp.operation += buffer[i];
@@ -19,6 +19,7 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 }
                 else if (buffer[i + 1] == 10 || i == bufSize - 1) {
                     temp.op1 = hexStrToInt(hexConv);
+                    temp.op2 = 0;
                     hexConv.clear();
                     control = 5;
                 }
@@ -32,6 +33,7 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 }
                 else if (buffer[i + 1] == 10 || i == bufSize - 1) {
                     temp.op2 = hexStrToInt(hexConv);
+                    temp.op3 = 0;
                     hexConv.clear();
                     control = 5;
                 }
@@ -57,8 +59,37 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
     }
 }
 
-void ARM::execute() {
-    return;
+std::string ARM::execute() {
+    for (auto x : set) {
+        if (x.operation == "ADD") {
+            result.push_back(x.op1 + x.op2);
+        }
+        else if (x.operation == "SUB") {
+            result.push_back(x.op1 - x.op2);
+        }
+        else if (x.operation == "DIV") {
+            if (x.op2 != 0) result.push_back(x.op1 / x.op2);
+            else result.push_back(0);
+        }
+        else if (x.operation == "MUL") {
+            result.push_back(x.op1 * x.op2);
+        }
+    }
+    return buildOutput();
+}
+
+std::string ARM::buildOutput() {
+    std::stringstream out;
+    out << "\n";
+    for (int i = 0; i < (int)set.size(); i++) {
+        //Insert some operation checking for including the correct outputs/operands
+        out << "Operation       : " << set[i].operation << "\n";
+        out << "Operator 1      : " << intToHexStr(set[i].op1) << "\n";
+        out << "Operator 2      : " << intToHexStr(set[i].op2) << "\n";
+        out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
+        out << "Result          : " << intToHexStr(result[i]) << "\n" << std::endl;
+    }
+    return out.str();
 }
 
 uint32_t ARM::hexStrToInt(std::string hex) {
