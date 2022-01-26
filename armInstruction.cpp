@@ -1,5 +1,11 @@
 #include "armInstruction.h"
 
+/**
+ * @brief Parses Assembly instructions from character buffer
+ * 
+ * @param buffer Buffer containing instruction set loaded from .txt file
+ * @param bufSize Size of character buffer
+ */
 void ARM::parse(char buffer[], uint32_t bufSize) {
     std::string hexConv;
     INSTRUCTION temp;
@@ -59,6 +65,11 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
     }
 }
 
+/**
+ * @brief Basic instruction execution
+ * 
+ * @return std::string Necessary output for printing to console built from buildOutput()
+ */
 std::string ARM::execute() {
     for (auto x : set) {
         if (x.operation == "ADD") {
@@ -78,6 +89,11 @@ std::string ARM::execute() {
     return buildOutput();
 }
 
+/**
+ * @brief Structures output string for printing
+ * 
+ * @return std::string Output string to be displayed to console
+ */
 std::string ARM::buildOutput() {
     std::stringstream out;
     out << "\n";
@@ -92,6 +108,12 @@ std::string ARM::buildOutput() {
     return out.str();
 }
 
+/**
+ * @brief Converts an ASCII string of hexadecimal numbers to uint32_t
+ * 
+ * @param hex String containing the ASCII hex number
+ * @return uint32_t Converted hex value in decimal
+ */
 uint32_t ARM::hexStrToInt(std::string hex) {
     uint32_t x = 0;
     if (hex[0] == '0' && hex[1] == 'x') {
@@ -109,6 +131,12 @@ uint32_t ARM::hexStrToInt(std::string hex) {
     return x;
 }
 
+/**
+ * @brief Converts a uint32_t to an ASCII hexadecimal string
+ * 
+ * @param x Decimal number to be converted
+ * @return std::string Converted hex ASCII string
+ */
 std::string ARM::intToHexStr(uint32_t x) {
     uint64_t r, q = x;
     std::string hex;
@@ -123,6 +151,13 @@ std::string ARM::intToHexStr(uint32_t x) {
     return hex;
 }
 
+/**
+ * @brief Simple test for alpha-numeric characters
+ * 
+ * @param c Character to be tested
+ * @return true Is an alpha-numeric character
+ * @return false Is not an alpha-numeric character
+ */
 bool ARM::isAlphaNum(char c) {
     if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122)) return true;
     else return false;

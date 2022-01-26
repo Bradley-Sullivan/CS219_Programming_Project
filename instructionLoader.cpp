@@ -1,5 +1,10 @@
 #include "instructionLoader.h"
 
+/**
+ * @brief Reads in instruction set from .txt file and stores in char buffer
+ * 
+ * @return int Read status
+ */
 int InstructionLoader::load() {
     std::fstream file;
     file.open(filename, std::fstream::in);
@@ -21,6 +26,12 @@ int InstructionLoader::load() {
     return 0;
 }
 
+/**
+ * @brief Writes instruction execution output to file
+ * 
+ * @param outputFilename File to be written to. If file does not exist, one is created.
+ * @return int Write status
+ */
 int InstructionLoader::save(std::string outputFilename) {
     std::fstream file;
     file.open(outputFilename, std::fstream::out);
@@ -34,6 +45,11 @@ int InstructionLoader::save(std::string outputFilename) {
     return 0;
 }
 
+/**
+ * @brief Fetches execution output from IInstruction pointer.
+ * 
+ * @return std::string Returns exectution output string
+ */
 std::string InstructionLoader::execute() {
     exeOutput = i->execute();
     return exeOutput;
