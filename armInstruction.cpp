@@ -71,11 +71,13 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
  * @return std::string Necessary output for printing to console built from buildOutput()
  */
 std::string ARM::execute() {
-    for (auto x : set) {
+    for (auto& x : set) {
         if (x.operation == "ADD") {
             result.push_back(x.op1 + x.op2);
+            if (x.op1 + x.op2 < x.op1 || x.op1 + x.op2 < x.op2) x.overflow = true;
         }
         else if (x.operation == "SUB") {
+            //Not entirely accurate. Need Two's Complement functionality
             result.push_back(x.op1 - x.op2);
         }
         else if (x.operation == "DIV") {
@@ -102,8 +104,9 @@ std::string ARM::buildOutput() {
         out << "Operation       : " << set[i].operation << "\n";
         out << "Operator 1      : " << intToHexStr(set[i].op1) << "\n";
         out << "Operator 2      : " << intToHexStr(set[i].op2) << "\n";
-        out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
-        out << "Result          : " << intToHexStr(result[i]) << "\n" << std::endl;
+        //out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
+        if (!set[i].overflow) out << "Result          : " << intToHexStr(result[i]) << "\n" << std::endl;
+        else out << "Result          : " << intToHexStr(result[i]) << " (!!OVERFLOW!!)\n" << std::endl;
     }
     return out.str();
 }
