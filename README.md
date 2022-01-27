@@ -30,7 +30,9 @@ All console output will be stored in the .txt file `out.txt`
 
 ## Author
 Bradley Sullivan - CS 219.1001
+
 bradleysullivan@nevada.unr.edu
+
 Git Repository: https://github.com/Bradley-Sullivan/CS219_Programming_Project_1.git
 
 
