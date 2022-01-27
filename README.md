@@ -1,4 +1,4 @@
-# CS219_Programming_Project_1
+# CS219 Programming Project 1
 ### Project Overview
 This program aims to emulate basic ARM Assembly language instructions with C++, specifically the ADD instruction.
 There should be sufficient modularity for future expansion/extension with a separate instruction loader/writer and dedicated ARM instruction class.
