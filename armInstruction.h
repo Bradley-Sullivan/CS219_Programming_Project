@@ -26,7 +26,7 @@ typedef struct INSTRUCTION {
     uint32_t op1;
     uint32_t op2;
     uint32_t op3;   //third operand is available if needed
-    bool overflow;
+    bool overflow, regVal[3];
 } INSTRUCTION;
 
 class ARM : public IInstruction {
@@ -37,10 +37,12 @@ class ARM : public IInstruction {
 protected:
     void parse(char[], uint32_t) override;
     std::string execute() override;
+private:
     std::string buildOutput();
     uint32_t hexStrToInt(std::string);
     std::string intToHexStr(uint32_t);
     bool isAlphaNum(char);
+    uint32_t getRegIdx(char[], int);
 };
 
 #endif //ARMINSTRUCITON_H
