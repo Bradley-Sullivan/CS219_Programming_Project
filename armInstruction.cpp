@@ -10,6 +10,11 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
     std::string hexConv;
     INSTRUCTION temp;
     int control = 1;
+    uint32_t regIdx;
+
+    for (int i = 0; i < 3; i++) temp.regVal[i] = false;
+    temp.overflow = false;
+
     for (uint32_t i = 0; i < bufSize || control == 5; i++) {
         switch (control) {
             case 1:
@@ -17,39 +22,76 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 if (buffer[i + 1] == 32) control = 2;
                 break;
             case 2:
-                if (isAlphaNum(buffer[i])) hexConv += buffer[i];
-                if (buffer[i + 1] == 32) {
-                    temp.op1 = hexStrToInt(hexConv); 
-                    hexConv.clear();
-                    control = 3;
+                if (isAlphaNum(buffer[i])) {
+                    if (buffer[i] == 'r' || buffer[i] == 'R') {
+                        regIdx = getRegIdx(buffer, i + 1);
+                        temp.op1 = regIdx;
+                        temp.regVal[0] = true;
+                    }
+                    else hexConv += buffer[i];
                 }
-                else if (buffer[i + 1] == 10 || i == bufSize - 1) {
-                    temp.op1 = hexStrToInt(hexConv);
-                    temp.op2 = 0;
-                    hexConv.clear();
-                    control = 5;
+                if (buffer[i + 1] == 32 || buffer[i + 1] == 10 || i == bufSize - 1) {
+                    if (!temp.regVal[0]) {
+                        temp.op1 = hexStrToInt(hexConv);
+                        hexConv.clear();
+                        control = 3;
+                    }
+                    else {
+                        hexConv.clear();
+                        control = 3;
+                    }
+                    if (buffer[i + 1] == 10 || i == bufSize - 1) {
+                        temp.op2 = 0;
+                        hexConv.clear();
+                        control = 5;
+                    }
                 }
                 break;
             case 3:
-                if (isAlphaNum(buffer[i])) hexConv += buffer[i];
-                if (buffer[i + 1] == 32) {
-                    temp.op2 = hexStrToInt(hexConv);
-                    hexConv.clear();
-                    control = 4;
+                if (isAlphaNum(buffer[i])) {
+                    if (buffer[i] == 'r' || buffer[i] == 'R') {
+                        regIdx = getRegIdx(buffer, i + 1);
+                        temp.op2 = regIdx;
+                        temp.regVal[1] = true;
+                    }
+                    else hexConv += buffer[i];
                 }
-                else if (buffer[i + 1] == 10 || i == bufSize - 1) {
-                    temp.op2 = hexStrToInt(hexConv);
-                    temp.op3 = 0;
-                    hexConv.clear();
-                    control = 5;
+                if (buffer[i + 1] == 32 || buffer[i + 1] == 10 || i == bufSize - 1) {
+                    if (!temp.regVal[1]) {
+                        temp.op2 = hexStrToInt(hexConv);
+                        hexConv.clear();
+                        control = 4;
+                    }
+                    else {
+                        hexConv.clear();
+                        control = 5;
+                    }
+                    if (buffer[i + 1] == 10 || i == bufSize - 1) {
+                        temp.op3 = 0;
+                        hexConv.clear();
+                        control = 5;
+                    }
                 }
                 break;
             case 4:
-                if (isAlphaNum(buffer[i])) hexConv += buffer[i];
-                if (buffer[i + 1] == 10 || buffer[i + 1] == 32 || i == bufSize - 1) {
-                    temp.op3 = hexStrToInt(hexConv);
-                    hexConv.clear();
-                    control = 5;
+                if (isAlphaNum(buffer[i])) {
+                    if (buffer[i] == 'r' || buffer[i] == 'R') {
+                        regIdx = getRegIdx(buffer, i + 1);
+                        temp.op3 = regIdx;
+                        temp.regVal[2] = true;
+                    }
+                    else hexConv += buffer[i];
+                }
+                if (buffer[i + 1] == 32 || buffer[i + 1] == 10 || i == bufSize - 1) {
+                    if (!temp.regVal[2]) {
+                        temp.op3 = hexStrToInt(hexConv);
+                        hexConv.clear();
+                        control = 5;
+                    }
+                    else {
+                        hexConv.clear();
+                        control = 5;
+                    }
                 }
                 break;
             case 5:
@@ -65,27 +107,74 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
     }
 }
 
+uint32_t ARM::getRegIdx(char buffer[], int i) {
+    int k = i + 1, regIdx;
+    while (buffer[k] > 48 && buffer[k] <= 57) k++;
+    switch (k - i) {
+        case 1:
+            regIdx = buffer[k - 1] - '0';
+            break;
+        case 2: 
+            regIdx = (10 * (buffer[k - 2] - '0')) + (buffer[k - 1] - '0');
+            break;
+        default:
+            std::cout << "regIdx err" << std::endl;
+            break;
+    
+    }
+    return regIdx;
+}
+
 /**
  * @brief Basic instruction execution
  * 
  * @return std::string Necessary output for printing to console built from buildOutput()
  */
 std::string ARM::execute() {
+    uint32_t rVal;
     for (auto& x : set) {
         if (x.operation == "ADD") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 + x.op2);
             if (x.op1 + x.op2 < x.op1 || x.op1 + x.op2 < x.op2) x.overflow = true;
         }
         else if (x.operation == "SUB") {
             //Not entirely accurate. Need Two's Complement functionality
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 - x.op2);
         }
         else if (x.operation == "DIV") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             if (x.op2 != 0) result.push_back(x.op1 / x.op2);
             else result.push_back(0);
         }
         else if (x.operation == "MUL") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 * x.op2);
+        }
+        else if (x.operation == "AND") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            result.push_back(x.op1 & x.op2);
+        }   
+        else if (x.operation == "OR") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            result.push_back(x.op1 | x.op2);
+        }
+        else if (x.operation == "EOR") {
+            if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
+            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            result.push_back(x.op1 ^ x.op2);
+        }
+        else if (x.operation == "MOV") {
+            if (x.regVal[0]) r[x.op1] = x.op2;
+            else if (x.regVal[0] && x.regVal[1]) r[x.op1] = r[x.op2];
+            result.push_back(x.op2);
         }
     }
     return buildOutput();
@@ -105,8 +194,12 @@ std::string ARM::buildOutput() {
         out << "Operator 1      : " << intToHexStr(set[i].op1) << "\n";
         out << "Operator 2      : " << intToHexStr(set[i].op2) << "\n";
         //out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
-        if (!set[i].overflow) out << "Result          : " << intToHexStr(result[i]) << "\n" << std::endl;
-        else out << "Result          : " << intToHexStr(result[i]) << " (!!OVERFLOW!!)\n" << std::endl;
+        out << "Result          : ";
+        if (set[i].operation == "MOV") out << intToHexStr(result[i]) << " ==> R" << set[i].op1;
+        else out << intToHexStr(result[i]);
+        if (set[i].overflow) out << " (!!OVERFLOW!!)\n";
+        else out << "\n";
+        out << std::endl;
     }
     return out.str();
 }
