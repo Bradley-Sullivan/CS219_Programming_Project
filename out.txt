@@ -24,3 +24,33 @@ Operator 1      : 0x72DF9901
 Operator 2      : 0x2E0B484A
 Result          : 0xA0EAE14B
 
+Operation       : MOV
+Operator 1      : 0xC
+Operator 2      : 0x69
+Result          : 0x69 ==> R12
+
+Operation       : ADD
+Operator 1      : 0x69
+Operator 2      : 0x420
+Result          : 0x489
+
+Operation       : MOV
+Operator 1      : 0x1
+Operator 2      : 0x1
+Result          : 0x1 ==> R1
+
+Operation       : MOV
+Operator 1      : 0x2
+Operator 2      : 0x2
+Result          : 0x2 ==> R2
+
+Operation       : MOV
+Operator 1      : 0x1
+Operator 2      : 0x2
+Result          : 0x2 ==> R1
+
+Operation       : ADD
+Operator 1      : 0x2
+Operator 2      : 0x2
+Result          : 0x4
+
