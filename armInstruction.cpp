@@ -100,6 +100,8 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 temp.op1 = 0;
                 temp.op2 = 0;
                 temp.op3 = 0;
+                for (int i = 0; i < 3; i++) temp.regVal[i] = false;
+                temp.overflow = false;
                 control = 1;
                 break;
         }
@@ -135,40 +137,40 @@ std::string ARM::execute() {
     for (auto& x : set) {
         if (x.operation == "ADD") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 + x.op2);
             if (x.op1 + x.op2 < x.op1 || x.op1 + x.op2 < x.op2) x.overflow = true;
         }
         else if (x.operation == "SUB") {
             //Not entirely accurate. Need Two's Complement functionality
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 - x.op2);
         }
         else if (x.operation == "DIV") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             if (x.op2 != 0) result.push_back(x.op1 / x.op2);
             else result.push_back(0);
         }
         else if (x.operation == "MUL") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 * x.op2);
         }
         else if (x.operation == "AND") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 & x.op2);
         }   
         else if (x.operation == "OR") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 | x.op2);
         }
         else if (x.operation == "EOR") {
             if (x.regVal[0]) { rVal = r[(int) x.op1]; x.op1 = rVal; }
-            else if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
+            if (x.regVal[1]) { rVal = r[(int) x.op2]; x.op2 = rVal; }
             result.push_back(x.op1 ^ x.op2);
         }
         else if (x.operation == "MOV") {
@@ -193,7 +195,7 @@ std::string ARM::buildOutput() {
         out << "Operation       : " << set[i].operation << "\n";
         out << "Operator 1      : " << intToHexStr(set[i].op1) << "\n";
         out << "Operator 2      : " << intToHexStr(set[i].op2) << "\n";
-        //out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
+        out << "Operator 3      : " << intToHexStr(set[i].op3) << "\n";
         out << "Result          : ";
         if (set[i].operation == "MOV") out << intToHexStr(result[i]) << " ==> R" << set[i].op1;
         else out << intToHexStr(result[i]);
