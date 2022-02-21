@@ -1,4 +1,4 @@
-# CS219 Programming Project 2
+# CS-219 Programming Project 2
 ### Project Overview
 This program aims to emulate basic ARM Assembly language instructions with C++.
 
@@ -41,7 +41,7 @@ Bradley Sullivan - CS 219.1001
 
 bradleysullivan@nevada.unr.edu
 
-Git Repository: https://github.com/Bradley-Sullivan/CS219_Programming_Project_1.git
+Git Repository: https://github.com/Bradley-Sullivan/CS219_Programming_Project
 
 
 
