@@ -3,10 +3,10 @@
 This program aims to emulate basic ARM Assembly language instructions with C++.
 
 Supported Instructions:
-    - ADD, SUB, MUL, DIV
-    - AND, OR (ORR), XOR (EOR), NOT
-    - LSL, LSR, ASR
-    - MOV
+- ADD, SUB, MUL, DIV
+- AND, OR (ORR), XOR (EOR), NOT
+- LSL, LSR, ASR
+- MOV
 There should be sufficient modularity for future expansion/extension with a separate instruction loader/writer and dedicated ARM instruction class.
 
 
