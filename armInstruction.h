@@ -23,6 +23,7 @@
 
 typedef struct INSTRUCTION {
     std::string operation;
+    uint32_t op[3];
     uint32_t op1;
     uint32_t op2;
     uint32_t op3;   //third operand is available if needed
@@ -43,6 +44,8 @@ private:
     std::string intToHexStr(uint32_t);
     bool isAlphaNum(char);
     uint32_t getRegIdx(char[], int);
+    bool MSBChk(uint32_t);
+    void clrInst(INSTRUCTION&);
 };
 
 #endif //ARMINSTRUCITON_H
