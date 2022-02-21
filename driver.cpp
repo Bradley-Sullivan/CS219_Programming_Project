@@ -13,7 +13,7 @@
 #include "armInstruction.h"
 
 int main(void) {
-    InstructionLoader loader(new ARM, std::string("Programming-Project-1.txt"));
+    InstructionLoader loader(new ARM, std::string("Programming-Project-2.txt"));
     if (loader.load() == 0) {
         std::string output = loader.execute();
         std::cout << output << std::endl;
