@@ -7,6 +7,7 @@ Supported Instructions:
 - AND, OR (ORR), XOR (EOR), NOT
 - LSL, LSR, ASR
 - MOV
+
 There should be sufficient modularity for future expansion/extension with a separate instruction loader/writer and dedicated ARM instruction class.
 
 
