@@ -131,6 +131,13 @@ std::string ARM::execute() {
     return buildOutput();
 }
 
+/**
+ * @brief Checks converted hex string for MSB
+ * 
+ * @param x Integer to be checked
+ * @return true if MSB is 1
+ * @return false if MSB is 0
+ */
 bool ARM::MSBChk(uint32_t x) {
     std::string hex = intToHexStr(x);
     if (hex[2] == '8' || hex[2] == '9' ||
@@ -219,6 +226,11 @@ bool ARM::isAlphaNum(char c) {
     else return false;
 }
 
+/**
+ * @brief Helper subroutine to clear/reset an INSTRUCTION struct
+ * 
+ * @param x Instruction to be cleared
+ */
 void ARM::clrInst(INSTRUCTION& x) {
     for (int i = 0; i < 3; i++) {
         x.regVal[i] = false;
