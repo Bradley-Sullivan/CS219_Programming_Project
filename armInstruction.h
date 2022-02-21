@@ -24,9 +24,6 @@
 typedef struct INSTRUCTION {
     std::string operation;
     uint32_t op[3];
-    uint32_t op1;
-    uint32_t op2;
-    uint32_t op3;   //third operand is available if needed
     bool overflow, regVal[3];
 } INSTRUCTION;
 
