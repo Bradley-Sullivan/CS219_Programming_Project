@@ -91,24 +91,24 @@ std::string ARM::execute() {
         }
         else if (x.operation == "SUB") {
             result.push_back(x.op[0] - x.op[1]);
-            if (x.op2 > x.op1) x.overflow = true;
+            if (x.op[1] > x.op[0]) x.overflow = true;
         }
         else if (x.operation == "DIV") {
-            if (x.op2 != 0) result.push_back(x.op[0] / x.op[1]);
+            if (x.op[1] != 0) result.push_back(x.op[0] / x.op[1]);
             else result.push_back(0);
         }
         else if (x.operation == "MUL") {
             result.push_back(x.op[0] * x.op[1]);
         }
         else if (x.operation == "LSL") {
-            result.push_back(x.op[0] << 1);
+            result.push_back(x.op[0] << x.op[1]);
         }
         else if (x.operation == "LSR") {
-            result.push_back(x.op[0] >> 1);
+            result.push_back(x.op[0] >> x.op[1]);
         }
         else if (x.operation == "ASR") {
-            if (!MSBChk(x.op[0])) result.push_back(x.op[0] >> 1);
-            else result.push_back((x.op[0] >> 1) ^ (uint32_t) (8 * pow(16, (intToHexStr(x.op[0]).length() - 3))));
+            if (!MSBChk(x.op[0])) result.push_back(x.op[0] >> x.op[1]);
+            else result.push_back((x.op[0] >> x.op[1]) ^ (uint32_t) (8 * pow(16, (intToHexStr(x.op[0]).length() - 3))));
         }
         else if (x.operation == "AND") {
             result.push_back(x.op[0] & x.op[1]);
@@ -140,10 +140,13 @@ std::string ARM::execute() {
  */
 bool ARM::MSBChk(uint32_t x) {
     std::string hex = intToHexStr(x);
-    if (hex[2] == '8' || hex[2] == '9' ||
-        hex[2] == 'A' || hex[2] == 'B' ||
-        hex[2] == 'C' || hex[2] == 'D' ||
-        hex[2] == 'E' || hex[2] == 'F') return true;
+    if (hex.length() - 2 == 8){
+        if (hex[2] == '8' || hex[2] == '9' ||
+            hex[2] == 'A' || hex[2] == 'B' ||
+            hex[2] == 'C' || hex[2] == 'D' ||
+            hex[2] == 'E' || hex[2] == 'F') return true;
+        else return false;
+    }    
     else return false;
 }
 
