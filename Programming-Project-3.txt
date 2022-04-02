@@ -1,0 +1,12 @@
+MOV r0 0x69
+MOV R1 0x420
+ADD r2 R1 r0
+SUB r2 r1 r0
+AND r2 r0 r1
+ORR r3 r2 r1
+XOR r4 r3 r2
+MOV r5 0xeEeF
+ASR r6 r5
+LSR r7 r6 0x1
+LSL r7 0x8
+

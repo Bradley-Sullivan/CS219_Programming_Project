@@ -1,5 +1,11 @@
 #include "armInstruction.h"
 
+ARM::ARM() {
+    for (int i = 0; i < 8; i++) {
+        r[i] = 0;
+    }
+}
+
 /**
  * @brief Parses Assembly instructions from character buffer
  * 
@@ -23,6 +29,7 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 regIdx = getRegIdx(buffer, i + 1);
                 temp.op[opCt] = regIdx;
                 temp.regVal[opCt] = true;
+                temp.opCt++;
                 opCt++;
                 i += 2;
             }
@@ -32,8 +39,9 @@ void ARM::parse(char buffer[], uint32_t bufSize) {
                 }
                 temp.op[opCt] = hexStrToInt(hexConv);
                 hexConv.clear();
-                opCt++;
-                if (opCt == 3) opCt = 0;
+                temp.opCt++;
+                opCt++;                
+                if (opCt == 4) opCt = 0;
             }
         }
         if (opCt != 0 && (buffer[i] == 10 || i >= (int) bufSize)) {
@@ -79,45 +87,115 @@ std::string ARM::execute() {
     uint32_t rVal;
     for (auto& x : set) {
         if (x.operation != "MOV") {
-            if (x.regVal[0]) { rVal = r[(int) x.op[0]]; x.op[0] = rVal; }
             if (x.regVal[1]) { rVal = r[(int) x.op[1]]; x.op[1] = rVal; }
             if (x.regVal[2]) { rVal = r[(int) x.op[2]]; x.op[2] = rVal; }
         }        
         if (x.operation == "ADD") {
-            result.push_back(x.op[0] + x.op[1] + x.op[2]);
-            if (x.op[0] + x.op[1] + x.op[2] < x.op[0] ||
-                x.op[0] + x.op[1] + x.op[2] < x.op[1] ||
-                x.op[0] + x.op[1] + x.op[2] < x.op[2]) x.overflow = true;
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] + x.op[2];
+                result.push_back(x.op[1] + x.op[2]);
+            } else {
+                result.push_back(x.op[0] + x.op[1] + x.op[2]);
+            }
+            if (x.op[1] + x.op[2] < x.op[1] ||
+                x.op[1] + x.op[2] < x.op[2]) x.overflow = true;
         }
         else if (x.operation == "SUB") {
-            result.push_back(x.op[0] - x.op[1]);
-            if (x.op[1] > x.op[0]) x.overflow = true;
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] - x.op[2];
+                result.push_back(x.op[1] - x.op[2]);
+                if (x.op[1] < x.op[2]) x.overflow = true;
+            } else {
+                result.push_back(x.op[0] - x.op[1]);
+                if (x.op[0] < x.op[1]) x.overflow = true;
+            }
         }
         else if (x.operation == "DIV") {
-            if (x.op[1] != 0) result.push_back(x.op[0] / x.op[1]);
-            else result.push_back(0);
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] / x.op[2];
+                result.push_back(x.op[1] / x.op[2]);
+            } else {
+                result.push_back(x.op[0] / x.op[1]);
+            }
         }
         else if (x.operation == "MUL") {
-            result.push_back(x.op[0] * x.op[1]);
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] * x.op[2];
+                result.push_back(x.op[1] * x.op[2]);
+            } else {
+                result.push_back(x.op[0] * x.op[1]);
+            }
         }
         else if (x.operation == "LSL") {
-            result.push_back(x.op[0] << x.op[1]);
+            if (x.regVal[0]) {
+                if (x.opCt == 2) r[x.op[0]] = x.op[1] << 1;
+                else if (x.opCt == 3) r[x.op[0]] = x.op[1] << x.op[2];
+                result.push_back(r[x.op[0]]);
+            } else {
+                if (x.opCt == 1) result.push_back(x.op[0] << 1);
+                else result.push_back(x.op[0] << x.op[1]);
+            }
         }
         else if (x.operation == "LSR") {
-            result.push_back(x.op[0] >> x.op[1]);
+            if (x.regVal[0]) {
+                if (x.opCt == 2) r[x.op[0]] = x.op[1] >> 1;
+                else if (x.opCt == 3) r[x.op[0]] = x.op[1] >> x.op[2];
+                result.push_back(r[x.op[0]]);
+            } else {
+                if (x.opCt == 1) result.push_back(x.op[0] >> 1);
+                else result.push_back(x.op[0] >> x.op[1]);
+            }
         }
         else if (x.operation == "ASR") {
-            if (!MSBChk(x.op[0])) result.push_back(x.op[0] >> x.op[1]);
-            else result.push_back((x.op[0] >> x.op[1]) ^ (uint32_t) (8 * pow(16, (intToHexStr(x.op[0]).length() - 3))));
+            if (x.regVal[0]) {
+                if (x.opCt == 2) {
+                    if (!MSBChk(x.op[1])) {
+                        r[x.op[0]] = x.op[1] >> 1;
+                    } else {
+                        r[x.op[0]] = (x.op[1] >> 1) ^ (uint32_t) (8 * pow(16, (intToHexStr(x.op[1]).length() - 3)));
+                    }
+                } else if (x.opCt == 3) {
+                    if (!MSBChk(x.op[1])) {
+                        r[x.op[0]] = x.op[1] >> x.op[2];
+                    } else {
+                        for (uint32_t i = 0; i <= x.op[2]; i++) {
+                            x.op[1] = (x.op[1] >> 1) ^ (uint32_t)(8 * pow(16, (intToHexStr(x.op[1]).length() - 3)));
+                        }
+                        r[x.op[0]] = x.op[1];
+                    }
+                }
+                result.push_back(r[x.op[0]]);
+            } else {
+                if (x.opCt == 1) {
+                    result.push_back(x.op[0] >> 1);
+                } else if (x.opCt == 2) {
+                    result.push_back(x.op[0] >> x.op[2]);
+                }
+            }
         }
         else if (x.operation == "AND") {
-            result.push_back(x.op[0] & x.op[1]);
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] & x.op[2];
+                result.push_back(x.op[1] & x.op[2]);
+            } else {
+                result.push_back(x.op[0] & x.op[1]);
+            }
         }   
         else if (x.operation == "OR" || x.operation == "ORR") {
-            result.push_back(x.op[0] | x.op[1]);
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] | x.op[2];
+                result.push_back(x.op[1] | x.op[2]);
+            } else {
+                result.push_back(x.op[0] | x.op[1]);
+            }
         }
         else if (x.operation == "EOR" || x.operation == "XOR") {
-            result.push_back(x.op[0] ^ x.op[1]);
+            if (x.regVal[0]) {
+                r[x.op[0]] = x.op[1] ^ x.op[2];
+                result.push_back(x.op[1] ^ x.op[2]);
+            } else {
+                result.push_back(x.op[0] ^ x.op[1]);
+            }
         }
         else if (x.operation == "NOT") {
             result.push_back(~x.op[0]);
@@ -165,7 +243,7 @@ std::string ARM::buildOutput() {
         out << "Operator 2      : " << intToHexStr(set[i].op[1]) << "\n";
         out << "Operator 3      : " << intToHexStr(set[i].op[2]) << "\n";
         out << "Result          : ";
-        if (set[i].operation == "MOV") out << intToHexStr(result[i]) << " ==> R" << set[i].op[0];
+        if (set[i].regVal[0]) out << intToHexStr(result[i]) << " ==> R" << set[i].op[0];
         else out << intToHexStr(result[i]);
         if (set[i].overflow) out << " (!!OVERFLOW!!)\n";
         else out << "\n";
@@ -239,6 +317,7 @@ void ARM::clrInst(INSTRUCTION& x) {
         x.regVal[i] = false;
         x.op[i] = 0;
     }
+    x.opCt = 0;
     x.overflow = false;
     x.operation.clear();
 }
