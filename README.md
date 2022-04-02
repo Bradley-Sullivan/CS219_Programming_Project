@@ -1,4 +1,4 @@
-# CS-219 Programming Project 2
+# CS-219 Programming Project 3
 ### Project Overview
 This program aims to emulate basic ARM Assembly language instructions with C++.
 
@@ -7,6 +7,14 @@ Supported Instructions:
 - AND, OR (ORR), XOR (EOR), NOT
 - LSL, LSR, ASR
 - MOV
+
+Supported Operand Formats:
+- OPCODE Rd, #IMM
+    - MOV (only)
+- OPCODE Rd, Rn, Rm
+    - ADD, SUB, AND, ORR, XOR
+- OPCODE Rd, Rn
+    - ASR, LSR, LSL
 
 There should be sufficient modularity for future expansion/extension with a separate instruction loader/writer and dedicated ARM instruction class.
 
